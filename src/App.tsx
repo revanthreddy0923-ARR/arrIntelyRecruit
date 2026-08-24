@@ -73,6 +73,7 @@ export default function App() {
   const location = useLocation();
   const [user, setUser] = useState<UserProfile | null>(null);
   const userRef = React.useRef<UserProfile | null>(null);
+  const authRoleRef = React.useRef<string>('candidate');
   
   useEffect(() => {
     userRef.current = user;
@@ -317,6 +318,19 @@ export default function App() {
           .single();
 
         if (profile) {
+          // Verify selected role matches the profile role to prevent redirect/login-logout flash
+          const selectedRole = authRoleRef.current;
+          
+          if (profile.role === 'admin' && selectedRole !== 'employer') {
+            await supabase.auth.signOut();
+            return;
+          }
+          
+          if (profile.role !== 'admin' && profile.role !== selectedRole) {
+            await supabase.auth.signOut();
+            return;
+          }
+
           const activeUser: UserProfile = {
             uid: profile.id,
             email: profile.email,
@@ -1130,6 +1144,7 @@ export default function App() {
                 <AuthView 
                   onLogin={handleLogin} 
                   onNavigateToLanding={() => navigate('/')} 
+                  onRoleChange={(r) => { authRoleRef.current = r; }}
                 />
               }
             />

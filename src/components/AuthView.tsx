@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserProfile, UserRole } from '../types';
 import { Briefcase, Key, Mail, User, Building, Shield, AlertCircle, ArrowRight } from 'lucide-react';
 import { supabase } from '../supabaseClient';
@@ -6,17 +6,28 @@ import { supabase } from '../supabaseClient';
 interface AuthViewProps {
   onLogin: (profile: UserProfile) => void;
   onNavigateToLanding?: () => void;
+  onRoleChange?: (role: UserRole) => void;
 }
 
-export default function AuthView({ onLogin, onNavigateToLanding }: AuthViewProps) {
+export default function AuthView({ onLogin, onNavigateToLanding, onRoleChange }: AuthViewProps) {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [role, setRole] = useState<UserRole>('candidate');
+  const [role, setRole] = useState<UserRole>(() => {
+    const saved = sessionStorage.getItem('auth_role') as UserRole;
+    return saved === 'employer' ? 'employer' : 'candidate';
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    sessionStorage.setItem('auth_role', role);
+    if (onRoleChange) {
+      onRoleChange(role);
+    }
+  }, [role, onRoleChange]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,7 +86,13 @@ export default function AuthView({ onLogin, onNavigateToLanding }: AuthViewProps
           return;
         }
 
-        // Verify selected role matches the profile role (unless admin, which logs in directly)
+        // Verify selected role matches the profile role (admin can only log in under employer tab)
+        if (profile.role === 'admin' && role !== 'employer') {
+          setError('This email is registered as an Admin. Please select the correct tab above.');
+          await supabase.auth.signOut();
+          return;
+        }
+
         if (profile.role !== 'admin' && profile.role !== role) {
           setError(`This email is registered as an ${profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}. Please select the correct tab above.`);
           await supabase.auth.signOut();
