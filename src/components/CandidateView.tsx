@@ -1909,8 +1909,8 @@ export default function CandidateView({
                       className={`p-4 rounded-xl border transition-all ${
                         isRejected
                           ? notif.read
-                            ? 'bg-red-50/10 dark:bg-red-950/5 border-red-200/20 dark:border-red-950/10'
-                            : 'bg-red-50/40 dark:bg-red-950/15 border-red-200/70 dark:border-red-900/30 shadow-sm'
+                            ? 'bg-red-50/10 dark:bg-red-950/20 border-red-200/35 dark:border-red-900/35'
+                            : 'bg-red-50/30 dark:bg-red-950/40 border-red-200 dark:border-red-800/80 shadow-md shadow-red-500/5'
                           : notif.read 
                             ? 'bg-slate-50/50 dark:bg-white/5 border-slate-200/60 dark:border-white/10' 
                             : 'bg-blue-50/30 dark:bg-blue-500/10 border-blue-100/80 dark:border-blue-500/20 shadow-sm'
@@ -1926,11 +1926,13 @@ export default function CandidateView({
                             <Bell className="h-4 w-4" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <h4 className={`text-xs font-bold flex items-center gap-2 ${
+                              isRejected ? 'text-red-700 dark:text-red-400' : 'text-slate-900 dark:text-white'
+                            }`}>
                               {notif.title}
                               {!notif.read && (
                                 <span className={`inline-block h-2 w-2 rounded-full animate-pulse ${
-                                  isRejected ? 'bg-red-550 dark:bg-red-400' : 'bg-blue-650'
+                                  isRejected ? 'bg-red-650' : 'bg-blue-600'
                                 }`} />
                               )}
                             </h4>
