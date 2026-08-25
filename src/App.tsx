@@ -1099,7 +1099,7 @@ export default function App() {
 
   const approvedJobs = jobs.filter(j => {
     const emp = usersList.find(u => u.uid === j.employerId);
-    return emp && emp.isApproved === true;
+    return emp ? emp.isApproved === true : true;
   });
 
   return (
