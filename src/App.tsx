@@ -932,9 +932,20 @@ export default function App() {
 
   // Update applicant processing status
   const handleUpdateAppStatus = async (appId: string, status: JobApplication['status']) => {
+    const app = applications.find(a => a.id === appId);
+    if (!app) return;
+
     setApplications(prev => prev.map(a => a.id === appId ? { ...a, status } : a));
     try {
       await supabase.from('applications').update({ status }).eq('id', appId);
+
+      await sendUserNotification(
+        app.candidateId,
+        'Application Status Updated 💼',
+        `Your application status for "${app.jobTitle}" at ${app.companyName} has been updated to "${status}".`,
+        'status_change',
+        user?.uid
+      );
     } catch (e) {
       console.error("Error in database operations for status update:", e);
     }
