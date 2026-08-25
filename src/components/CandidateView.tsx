@@ -1910,12 +1910,12 @@ export default function CandidateView({
                       className={`p-4 rounded-xl border transition-all ${
                         isRejected
                           ? notif.read
-                            ? 'bg-red-50/10 dark:bg-red-950/20 border-red-200/35 dark:border-red-900/35'
-                            : 'bg-red-50/30 dark:bg-red-950/40 border-red-200 dark:border-red-800/80 shadow-md shadow-red-500/5'
+                            ? 'bg-red-50/30 dark:bg-red-950/20 border-red-200/40 dark:border-red-900/35'
+                            : 'bg-red-50/70 dark:bg-red-950/40 border-red-300 dark:border-red-800/80 shadow-md shadow-red-500/5'
                           : isOffered
                             ? notif.read
-                              ? 'bg-emerald-50/10 dark:bg-emerald-950/20 border-emerald-200/35 dark:border-emerald-900/35'
-                              : 'bg-emerald-50/30 dark:bg-emerald-950/40 border-emerald-250 dark:border-emerald-800/80 shadow-md shadow-emerald-500/5'
+                              ? 'bg-emerald-50/30 dark:bg-emerald-950/20 border-emerald-200/40 dark:border-emerald-900/35'
+                              : 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800/80 shadow-md shadow-emerald-500/5'
                             : notif.read 
                               ? 'bg-slate-50/50 dark:bg-white/5 border-slate-200/60 dark:border-white/10' 
                               : 'bg-blue-50/30 dark:bg-blue-500/10 border-blue-100/80 dark:border-blue-500/20 shadow-sm'
@@ -1937,14 +1937,14 @@ export default function CandidateView({
                               isRejected 
                                 ? 'text-red-700 dark:text-red-400' 
                                 : isOffered
-                                  ? 'text-emerald-750 dark:text-emerald-400'
+                                  ? 'text-emerald-700 dark:text-emerald-400'
                                   : 'text-slate-900 dark:text-white'
                             }`}>
                               {notif.title}
                               {!notif.read && (
                                 <span className={`inline-block h-2 w-2 rounded-full animate-pulse ${
                                   isRejected 
-                                    ? 'bg-red-650' 
+                                    ? 'bg-red-600' 
                                     : isOffered
                                       ? 'bg-emerald-600'
                                       : 'bg-blue-600'
