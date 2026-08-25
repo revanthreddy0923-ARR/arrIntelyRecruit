@@ -1224,13 +1224,13 @@ export default function CandidateView({
 
                         <form onSubmit={handleApplyToJob} className="mt-5 space-y-4">
                           <div>
-                            <label className="block text-xs font-bold text-slate-700 mb-1.5">Application Resume Content</label>
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-350 mb-1.5">Application Resume Content</label>
                             <textarea
                               rows={10}
                               value={applyResume}
                               onChange={(e) => setApplyResume(e.target.value)}
                               placeholder="Paste complete plain text resume..."
-                              className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono leading-relaxed focus:bg-white focus:outline-none"
+                              className="w-full p-3.5 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-white/15 rounded-xl text-xs font-mono leading-relaxed text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all"
                               required
                             />
                           </div>

@@ -357,18 +357,14 @@ export default function EmployerView({
             {user.approvalStatus === 'none' && (
               <button
                 type="button"
-                onClick={() => {
-                  updateUserProfile({ approvalStatus: 'pending' });
-                  setShowRequestSuccess(true);
-                  setTimeout(() => setShowRequestSuccess(false), 5000);
-                }}
+                onClick={() => handleTabChange('request-admin')}
                 className="bg-amber-600 hover:bg-amber-700 text-white px-4.5 py-2 rounded-xl text-xs font-bold transition-all shadow-md shadow-amber-600/10 cursor-pointer"
               >
                 Submit Verification Request
               </button>
             )}
             {user.approvalStatus === 'pending' && (
-              <div className="flex items-center space-x-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-4 py-2 rounded-xl">
+              <div className="flex items-center space-x-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-250 dark:border-emerald-500/20 px-4 py-2 rounded-xl">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>Submitted — Pending Review</span>
               </div>
@@ -376,11 +372,7 @@ export default function EmployerView({
             {user.approvalStatus === 'rejected' && (
               <button
                 type="button"
-                onClick={() => {
-                  updateUserProfile({ approvalStatus: 'pending' });
-                  setShowRequestSuccess(true);
-                  setTimeout(() => setShowRequestSuccess(false), 5000);
-                }}
+                onClick={() => handleTabChange('request-admin')}
                 className="bg-amber-600 hover:bg-amber-700 text-white px-4.5 py-2 rounded-xl text-xs font-bold transition-all shadow-md shadow-amber-600/10 cursor-pointer"
               >
                 Resubmit Verification Request
@@ -1247,6 +1239,7 @@ export default function EmployerView({
                         placeholder="Please describe your company and reason for posting job listings..."
                         className="w-full p-3 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-white/15 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-75"
                         disabled={user.approvalStatus === 'pending'}
+                        required
                       />
                     </div>
 
@@ -1259,6 +1252,7 @@ export default function EmployerView({
                       <button
                         type="button"
                         onClick={() => {
+                          if (!requestNote.trim()) return;
                           updateUserProfile({ 
                             approvalStatus: 'pending',
                             companyWebsite: requestWebsite,
@@ -1267,7 +1261,8 @@ export default function EmployerView({
                           setShowRequestSuccess(true);
                           setTimeout(() => setShowRequestSuccess(false), 5000);
                         }}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-500/10 cursor-pointer"
+                        disabled={!requestNote.trim()}
+                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-500/10 cursor-pointer"
                       >
                         {user.approvalStatus === 'rejected' ? 'Resubmit Verification Request' : 'Submit Verification Request'}
                       </button>
