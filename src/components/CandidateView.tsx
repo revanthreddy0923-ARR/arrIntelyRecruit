@@ -1903,6 +1903,7 @@ export default function CandidateView({
               <div className="space-y-3">
                 {notifications.map((notif) => {
                   const isRejected = notif.message.toLowerCase().includes('rejected');
+                  const isOffered = notif.message.toLowerCase().includes('offered');
                   return (
                     <div 
                       key={notif.id} 
@@ -1911,9 +1912,13 @@ export default function CandidateView({
                           ? notif.read
                             ? 'bg-red-50/10 dark:bg-red-950/20 border-red-200/35 dark:border-red-900/35'
                             : 'bg-red-50/30 dark:bg-red-950/40 border-red-200 dark:border-red-800/80 shadow-md shadow-red-500/5'
-                          : notif.read 
-                            ? 'bg-slate-50/50 dark:bg-white/5 border-slate-200/60 dark:border-white/10' 
-                            : 'bg-blue-50/30 dark:bg-blue-500/10 border-blue-100/80 dark:border-blue-500/20 shadow-sm'
+                          : isOffered
+                            ? notif.read
+                              ? 'bg-emerald-50/10 dark:bg-emerald-950/20 border-emerald-200/35 dark:border-emerald-900/35'
+                              : 'bg-emerald-50/30 dark:bg-emerald-950/40 border-emerald-250 dark:border-emerald-800/80 shadow-md shadow-emerald-500/5'
+                            : notif.read 
+                              ? 'bg-slate-50/50 dark:bg-white/5 border-slate-200/60 dark:border-white/10' 
+                              : 'bg-blue-50/30 dark:bg-blue-500/10 border-blue-100/80 dark:border-blue-500/20 shadow-sm'
                       }`}
                     >
                       <div className="flex justify-between items-start gap-4">
@@ -1921,18 +1926,28 @@ export default function CandidateView({
                           <div className={`p-2 rounded-lg mt-0.5 shrink-0 ${
                             isRejected 
                               ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300' 
-                              : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'
+                              : isOffered
+                                ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                                : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'
                           }`}>
                             <Bell className="h-4 w-4" />
                           </div>
                           <div>
                             <h4 className={`text-xs font-bold flex items-center gap-2 ${
-                              isRejected ? 'text-red-700 dark:text-red-400' : 'text-slate-900 dark:text-white'
+                              isRejected 
+                                ? 'text-red-700 dark:text-red-400' 
+                                : isOffered
+                                  ? 'text-emerald-750 dark:text-emerald-400'
+                                  : 'text-slate-900 dark:text-white'
                             }`}>
                               {notif.title}
                               {!notif.read && (
                                 <span className={`inline-block h-2 w-2 rounded-full animate-pulse ${
-                                  isRejected ? 'bg-red-650' : 'bg-blue-600'
+                                  isRejected 
+                                    ? 'bg-red-650' 
+                                    : isOffered
+                                      ? 'bg-emerald-600'
+                                      : 'bg-blue-600'
                                 }`} />
                               )}
                             </h4>
