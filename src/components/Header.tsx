@@ -156,6 +156,17 @@ export default function Header({
                     >
                       Skill Assessment
                     </NavLink>
+                    <NavLink
+                      to="/notifications"
+                      id="nav-notifications"
+                      className={({ isActive }) => getNavLinkClass(isActive)}
+                    >
+                      Notifications {notifications.filter(n => !n.read).length > 0 && (
+                        <span className="ml-1 px-1.5 py-0.5 rounded-full bg-red-500 text-[10px] text-white font-bold leading-none">
+                          {notifications.filter(n => !n.read).length}
+                        </span>
+                      )}
+                    </NavLink>
                   </>
                 )}
 

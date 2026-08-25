@@ -1259,6 +1259,29 @@ export default function App() {
                     />
                   }
                 />
+                <Route
+                  path="/notifications"
+                  element={
+                    <CandidateView 
+                      user={user}
+                      jobs={approvedJobs}
+                      applications={applications.filter(a => a.candidateId === user.uid)}
+                      onApply={handleApplyToJob}
+                      updateUserProfile={handleUpdateProfile}
+                      careerRoadmap={careerRoadmap}
+                      setCareerRoadmap={handleUpdateRoadmap}
+                      skillVerifications={skillVerifications}
+                      onAddSkillVerification={handleAddSkillVerification}
+                      onCompleteSkillVerification={handleCompleteQuiz}
+                      notifications={notifications.filter(n => n.candidateId === user.uid)}
+                      onMarkNotificationsAsRead={handleMarkNotificationsAsRead}
+                      onDeleteNotification={handleDeleteNotification}
+                      interviewSets={interviewSets.filter(is => is.candidateId === user.uid)}
+                      activeTab="notifications"
+                      setActiveTab={(tab) => navigate(`/${tab}`)}
+                    />
+                  }
+                />
                 <Route path="*" element={<Navigate to="/jobs" replace />} />
               </>
             )}

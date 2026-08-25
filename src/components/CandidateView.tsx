@@ -77,7 +77,7 @@ export default function CandidateView({
   activeTab,
   setActiveTab
 }: CandidateViewProps) {
-  const [activeSubTab, setActiveSubTab] = useState<'profile' | 'jobs' | 'roadmap' | 'quiz' | 'applications'>('profile');
+  const [activeSubTab, setActiveSubTab] = useState<'profile' | 'jobs' | 'roadmap' | 'quiz' | 'applications' | 'notifications'>('profile');
 
   // Synchronize tab changes from the global header
   useEffect(() => {
@@ -85,14 +85,14 @@ export default function CandidateView({
       const mappedTab = activeTab === 'home' || activeTab === 'profile' ? 'profile' :
                         activeTab === 'skills' || activeTab === 'quiz' ? 'quiz' :
                         activeTab;
-      if (['profile', 'jobs', 'roadmap', 'quiz', 'applications'].includes(mappedTab)) {
+      if (['profile', 'jobs', 'roadmap', 'quiz', 'applications', 'notifications'].includes(mappedTab)) {
         setActiveSubTab(mappedTab as any);
         clearAllInputs();
       }
     }
   }, [activeTab]);
 
-  const handleTabChange = (tab: 'profile' | 'jobs' | 'roadmap' | 'quiz' | 'applications') => {
+  const handleTabChange = (tab: 'profile' | 'jobs' | 'roadmap' | 'quiz' | 'applications' | 'notifications') => {
     setActiveSubTab(tab);
     clearAllInputs();
     if (setActiveTab) {
@@ -101,7 +101,8 @@ export default function CandidateView({
         jobs: 'jobs',
         roadmap: 'roadmap',
         quiz: 'skills',
-        applications: 'applications'
+        applications: 'applications',
+        notifications: 'notifications'
       };
       setActiveTab(headerTabMap[tab] || tab);
     }
@@ -245,6 +246,16 @@ export default function CandidateView({
       setResumeText(user.resumeText);
     }
   }, [user.resumeText]);
+
+  // Mark candidate notifications as read when notifications tab is active
+  useEffect(() => {
+    if (activeSubTab === 'notifications') {
+      const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
+      if (unreadIds.length > 0) {
+        onMarkNotificationsAsRead(unreadIds);
+      }
+    }
+  }, [activeSubTab, notifications, onMarkNotificationsAsRead]);
 
   // Submit profile resume evaluation
   const handleEvaluateATS = async () => {
@@ -649,6 +660,25 @@ export default function CandidateView({
               >
                 <Briefcase className="h-4 w-4 shrink-0" />
                 <span>My Applications</span>
+              </button>
+              <button
+                id="cand-subtab-notifications"
+                onClick={() => handleTabChange('notifications')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                  activeSubTab === 'notifications'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/10'
+                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <Bell className="h-4 w-4 shrink-0" />
+                  <span>Notifications</span>
+                </div>
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-red-500 text-[10px] text-white font-bold leading-none">
+                    {notifications.filter(n => !n.read).length}
+                  </span>
+                )}
               </button>
             </nav>
           </div>
@@ -1844,6 +1874,79 @@ export default function CandidateView({
                 })()}
               </div>
 
+            </div>
+          )}
+
+          {/* 6. NOTIFICATIONS TAB */}
+          {activeSubTab === 'notifications' && (
+            <div className="bg-white dark:bg-[#121829] border border-slate-200 dark:border-white/10 p-6 rounded-2xl shadow-sm space-y-6">
+              <div className="flex justify-between items-center flex-wrap gap-2">
+                <div>
+                  <h3 className="font-display font-bold text-slate-900 dark:text-white text-lg flex items-center">
+                    <Bell className="h-5 w-5 text-blue-500 mr-2 shrink-0 animate-pulse" />
+                    Candidate Notifications Hub
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Stay updated with real-time feedback on your applications, screening updates, and interview prep sets.
+                  </p>
+                </div>
+                {notifications.length > 0 && (
+                  <button
+                    onClick={() => onMarkNotificationsAsRead(notifications.map(n => n.id))}
+                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 transition-colors"
+                  >
+                    Mark All as Read
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                {notifications.map((notif) => (
+                  <div 
+                    key={notif.id} 
+                    className={`p-4 rounded-xl border transition-all ${
+                      notif.read 
+                        ? 'bg-slate-50/50 dark:bg-white/5 border-slate-200/60 dark:border-white/10' 
+                        : 'bg-blue-50/30 dark:bg-blue-500/10 border-blue-100/80 dark:border-blue-500/20 shadow-sm'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex items-start space-x-3">
+                        <div className={`p-2 rounded-lg mt-0.5 shrink-0 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300`}>
+                          <Bell className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            {notif.title}
+                            {!notif.read && (
+                              <span className="inline-block h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+                            )}
+                          </h4>
+                          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-normal">{notif.message}</p>
+                          <span className="inline-block text-[10px] text-slate-400 dark:text-slate-500 mt-2 font-mono">
+                            {new Date(notif.createdAt).toLocaleDateString()} at {new Date(notif.createdAt).toLocaleTimeString()}
+                          </span>
+                        </div>
+                      </div>
+                      {onDeleteNotification && (
+                        <button
+                          onClick={() => onDeleteNotification(notif.id)}
+                          className="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-1 rounded-lg transition-colors cursor-pointer text-base font-bold"
+                          title="Delete notification"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {notifications.length === 0 && (
+                  <div className="text-center py-10 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 border-dashed rounded-2xl">
+                    <Bell className="h-8 w-8 text-slate-300 dark:text-slate-500 mx-auto mb-2" />
+                    <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold">No notifications to show.</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
