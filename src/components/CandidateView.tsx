@@ -1901,28 +1901,40 @@ export default function CandidateView({
               </div>
 
               <div className="space-y-3">
-                {notifications.map((notif) => (
-                  <div 
-                    key={notif.id} 
-                    className={`p-4 rounded-xl border transition-all ${
-                      notif.read 
-                        ? 'bg-slate-50/50 dark:bg-white/5 border-slate-200/60 dark:border-white/10' 
-                        : 'bg-blue-50/30 dark:bg-blue-500/10 border-blue-100/80 dark:border-blue-500/20 shadow-sm'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start gap-4">
-                      <div className="flex items-start space-x-3">
-                        <div className={`p-2 rounded-lg mt-0.5 shrink-0 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300`}>
-                          <Bell className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            {notif.title}
-                            {!notif.read && (
-                              <span className="inline-block h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-                            )}
-                          </h4>
-                          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-normal">{notif.message}</p>
+                {notifications.map((notif) => {
+                  const isRejected = notif.message.toLowerCase().includes('rejected');
+                  return (
+                    <div 
+                      key={notif.id} 
+                      className={`p-4 rounded-xl border transition-all ${
+                        isRejected
+                          ? notif.read
+                            ? 'bg-red-50/10 dark:bg-red-950/5 border-red-200/20 dark:border-red-950/10'
+                            : 'bg-red-50/40 dark:bg-red-950/15 border-red-200/70 dark:border-red-900/30 shadow-sm'
+                          : notif.read 
+                            ? 'bg-slate-50/50 dark:bg-white/5 border-slate-200/60 dark:border-white/10' 
+                            : 'bg-blue-50/30 dark:bg-blue-500/10 border-blue-100/80 dark:border-blue-500/20 shadow-sm'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex items-start space-x-3">
+                          <div className={`p-2 rounded-lg mt-0.5 shrink-0 ${
+                            isRejected 
+                              ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300' 
+                              : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'
+                          }`}>
+                            <Bell className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                              {notif.title}
+                              {!notif.read && (
+                                <span className={`inline-block h-2 w-2 rounded-full animate-pulse ${
+                                  isRejected ? 'bg-red-550 dark:bg-red-400' : 'bg-blue-650'
+                                }`} />
+                              )}
+                            </h4>
+                            <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-normal">{notif.message}</p>
                           <span className="inline-block text-[10px] text-slate-400 dark:text-slate-500 mt-2 font-mono">
                             {new Date(notif.createdAt).toLocaleDateString()} at {new Date(notif.createdAt).toLocaleTimeString()}
                           </span>
@@ -1939,7 +1951,8 @@ export default function CandidateView({
                       )}
                     </div>
                   </div>
-                ))}
+                );
+              })}
                 {notifications.length === 0 && (
                   <div className="text-center py-10 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 border-dashed rounded-2xl">
                     <Bell className="h-8 w-8 text-slate-300 dark:text-slate-500 mx-auto mb-2" />
